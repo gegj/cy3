@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>提现记录 - 邀请分享统计</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="flex flex-col h-screen">
+        <!-- 头部 -->
+        <header class="bg-primary text-white p-4 shadow-md">
+            <div class="flex items-center">
+                <a href="my.html" class="mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                <h1 class="text-xl font-bold">提现记录</h1>
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="flex-1 overflow-auto p-4" id="main-content">
+            <div id="withdraw-list-container" class="bg-white rounded-lg shadow-md p-5 mb-5">
+                <!-- 提现记录将在这里动态生成 -->
+                <div class="text-center py-5 text-gray-500" id="empty-message">暂无提现记录</div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/db.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+</html> 

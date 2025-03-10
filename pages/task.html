@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>每日任务 - 邀请分享统计</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="flex flex-col h-screen">
+        <!-- 头部 -->
+        <header class="bg-primary text-white p-4 shadow-md">
+            <h1 class="text-xl font-bold text-center">每日任务</h1>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="flex-1 overflow-auto p-4" id="main-content">
+            <div class="refresh-container">
+                <div class="refresh-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-cw">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                </div>
+                <div class="refresh-text">下拉刷新</div>
+            </div>
+
+            <!-- 统计卡片 -->
+            <div class="bg-white rounded-lg shadow-md p-5 mb-5">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-semibold">今日统计</h2>
+                    <span class="text-xs text-gray-500">每日08:00重置</span>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mt-3">
+                    <div class="text-center p-3 bg-blue-50 rounded-lg">
+                        <p class="text-sm text-gray-600">已完成任务</p>
+                        <p class="text-xl font-bold text-primary">1/4</p>
+                    </div>
+                    <div class="text-center p-3 bg-blue-50 rounded-lg">
+                        <p class="text-sm text-gray-600">今日收益</p>
+                        <p class="text-xl font-bold text-green-500" id="today-earnings">¥15.00</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 任务列表 -->
+            <div class="bg-white rounded-lg shadow-md p-5 mb-5">
+                <h2 class="text-lg font-semibold mb-3">每日任务</h2>
+                
+                <!-- 任务项 -->
+                <div class="border-b border-gray-100 py-4">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-medium">每日登录</h3>
+                                <p class="text-xs text-gray-500">每日登录应用获得奖励</p>
+                            </div>
+                        </div>
+                        <button class="bg-gray-200 text-gray-600 px-3 py-1 rounded-full text-sm" disabled>已完成</button>
+                    </div>
+                    <div class="mt-2 ml-13 pl-10">
+                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">+¥5.00</span>
+                    </div>
+                </div>
+                
+                <!-- 任务项 -->
+                <div class="border-b border-gray-100 py-4">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-medium">邀请1位好友</h3>
+                                <p class="text-xs text-gray-500">成功邀请1位新用户</p>
+                            </div>
+                        </div>
+                        <a href="invite.html" class="bg-primary text-white px-3 py-1 rounded-full text-sm">去完成</a>
+                    </div>
+                    <div class="mt-2 ml-13 pl-10">
+                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">+¥10.00</span>
+                    </div>
+                </div>
+                
+                <!-- 任务项 -->
+                <div class="border-b border-gray-100 py-4">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-medium">分享到朋友圈</h3>
+                                <p class="text-xs text-gray-500">将邀请链接分享到朋友圈</p>
+                            </div>
+                        </div>
+                        <a href="invite.html" class="bg-primary text-white px-3 py-1 rounded-full text-sm">去完成</a>
+                    </div>
+                    <div class="mt-2 ml-13 pl-10">
+                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">+¥8.00</span>
+                    </div>
+                </div>
+                
+                <!-- 任务项 -->
+                <div class="py-4">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-medium">连续登录7天</h3>
+                                <p class="text-xs text-gray-500">连续7天登录应用获得额外奖励</p>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xs text-gray-500 mb-1">1/7</div>
+                            <button class="bg-gray-200 text-gray-600 px-3 py-1 rounded-full text-sm" disabled>进行中</button>
+                        </div>
+                    </div>
+                    <div class="mt-2 ml-13 pl-10">
+                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">+¥20.00</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部导航 -->
+        <nav class="bg-white border-t border-gray-200 flex items-center justify-around p-2">
+            <a href="../index.html" class="flex flex-col items-center p-2 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span class="text-xs">首页</span>
+            </a>
+            <a href="task.html" class="flex flex-col items-center p-2 text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <span class="text-xs">任务</span>
+            </a>
+            <a href="invite.html" class="flex flex-col items-center p-2 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <span class="text-xs">邀请</span>
+            </a>
+            <a href="my.html" class="flex flex-col items-center p-2 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="text-xs">我的</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="../js/db.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+</html> 

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>个人中心 - 邀请分享统计</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="flex flex-col h-screen">
+        <!-- 头部 -->
+        <header class="bg-primary text-white p-4 shadow-md">
+            <h1 class="text-xl font-bold text-center">个人中心</h1>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="flex-1 overflow-auto p-4" id="main-content">
+            <div class="refresh-container">
+                <div class="refresh-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-cw">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                </div>
+                <div class="refresh-text">下拉刷新</div>
+            </div>
+
+            <!-- 用户信息卡片 -->
+            <div class="bg-white rounded-lg shadow-md p-5 mb-5">
+                <div class="flex items-center">
+                    <div id="user-avatar" class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mr-4 text-xl font-bold text-primary">
+                        用户
+                    </div>
+                    <div>
+                        <h2 id="username" class="text-lg font-bold">用户135****8976</h2>
+                        <p id="member-type" class="text-sm text-gray-500">普通会员</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-semibold">我的邀请码</h3>
+                        <div class="flex items-center">
+                            <span class="text-lg font-bold tracking-widest mr-2" id="invite-code">6985</span>
+                            <button id="copy-code-btn" class="text-primary text-sm">复制</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 钱包信息 -->
+            <div class="bg-white rounded-lg shadow-md p-5 mb-5">
+                <h2 class="text-lg font-bold mb-4">我的钱包</h2>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm text-gray-600">可提现余额 (元)</p>
+                        <p class="text-2xl font-bold text-primary" id="total-earnings">43265.00</p>
+                    </div>
+                    <button id="withdraw-btn" class="bg-primary text-white px-5 py-2 rounded-lg">申请提现</button>
+                </div>
+                
+                <div class="mt-6">
+                    <div class="flex justify-between border-b border-gray-100 py-3">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3 text-green-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <span>今日收益</span>
+                        </div>
+                        <span class="text-green-500 font-medium" id="today-earnings">+¥15.00</span>
+                    </div>
+                    
+                    <div class="flex justify-between py-3">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3 text-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                            </div>
+                            <span>总邀请人数</span>
+                        </div>
+                        <span class="font-medium" id="total-count">8653人</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设置菜单 -->
+            <div class="bg-white rounded-lg shadow-md p-5">
+                <h2 class="text-lg font-bold mb-4">设置</h2>
+                
+                <div class="border-b border-gray-100">
+                    <a href="withdraw-records.html" class="flex justify-between items-center py-3">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-3 text-gray-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <span>提现记录</span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
+                
+                <div class="border-b border-gray-100">
+                    <a href="faq.html" class="flex justify-between items-center py-3">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-3 text-gray-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <span>常见问题</span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
+                
+                <div>
+                    <a href="#" id="settings-btn" class="flex justify-between items-center py-3">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-3 text-gray-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+                            <span>设置</span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部导航 -->
+        <nav class="bg-white border-t border-gray-200 flex items-center justify-around p-2">
+            <a href="../index.html" class="flex flex-col items-center p-2 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span class="text-xs">首页</span>
+            </a>
+            <a href="task.html" class="flex flex-col items-center p-2 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <span class="text-xs">任务</span>
+            </a>
+            <a href="invite.html" class="flex flex-col items-center p-2 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <span class="text-xs">邀请</span>
+            </a>
+            <a href="my.html" class="flex flex-col items-center p-2 text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="text-xs">我的</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- 弹窗背景 -->
+    <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <!-- 提现弹窗 -->
+        <div id="withdraw-modal" class="bg-white rounded-lg shadow-xl w-5/6 max-w-md mx-auto p-5 hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">申请提现</h3>
+                <button class="close-modal text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="mb-4">
+                <p class="text-sm text-gray-600 mb-1">可提现余额</p>
+                <p class="text-xl font-bold text-primary mb-4" id="modal-total-earnings">0.00元</p>
+                <div class="form-group">
+                    <label class="form-label" for="withdraw-amount">提现金额 (元)</label>
+                    <input type="number" id="withdraw-amount" class="form-control" placeholder="请输入提现金额" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="withdraw-name">收款人姓名</label>
+                    <input type="text" id="withdraw-name" class="form-control" placeholder="请输入姓名">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="withdraw-account">收款账号</label>
+                    <input type="text" id="withdraw-account" class="form-control" placeholder="请输入微信或支付宝账号">
+                </div>
+            </div>
+            <button id="submit-withdraw" class="btn btn-primary btn-block py-2">确认提现</button>
+        </div>
+
+        <!-- 设置弹窗 -->
+        <div id="settings-modal" class="bg-white rounded-lg shadow-xl w-5/6 max-w-md mx-auto p-5 hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">账号设置</h3>
+                <button class="close-modal text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="mb-4">
+                <div class="form-group">
+                    <label class="form-label" for="avatar-url">头像URL</label>
+                    <input type="url" id="avatar-url" class="form-control" placeholder="请输入头像图片URL">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="user-nickname">用户昵称</label>
+                    <input type="text" id="user-nickname" class="form-control" placeholder="请输入您的昵称">
+                </div>
+            </div>
+            <button id="save-settings" class="btn btn-primary btn-block py-2">保存设置</button>
+        </div>
+    </div>
+
+    <script src="../js/db.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+</html> 

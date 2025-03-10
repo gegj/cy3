@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>管理后台 - 邀请分享统计</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="flex flex-col h-screen">
+        <!-- 头部 -->
+        <header class="bg-primary text-white p-4 shadow-md">
+            <div class="flex justify-between items-center">
+                <a href="../index.html" class="text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </a>
+                <h1 class="text-xl font-bold text-center flex-1">管理后台</h1>
+                <div class="w-6"></div>
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="flex-1 overflow-auto p-4" id="main-content">
+            <!-- 基本设置 -->
+            <div class="bg-white rounded-lg shadow-md p-5 mb-5">
+                <h2 class="text-lg font-bold mb-4">基本设置</h2>
+                
+                <div class="form-group">
+                    <label for="invite-price" class="form-label">邀请单价 (元)</label>
+                    <input type="number" id="invite-price" class="form-control" value="1.2" min="0" step="0.01">
+                </div>
+                
+                <div class="form-group">
+                    <label for="today-count" class="form-label">今日新增用户</label>
+                    <input type="number" id="today-count" class="form-control" value="3" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="total-count" class="form-label">总邀请人数</label>
+                    <input type="number" id="total-count" class="form-control" value="8653" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="invite-code" class="form-label">自定义邀请码</label>
+                    <input type="text" id="invite-code" class="form-control" value="6985" maxlength="8">
+                </div>
+                
+                <div class="form-group">
+                    <label for="invite-display-count" class="form-label">邀请界面显示条数</label>
+                    <input type="number" id="invite-display-count" class="form-control" value="6" min="1" max="20">
+                </div>
+            </div>
+            
+            <!-- 下拉刷新规则 -->
+            <div class="bg-white rounded-lg shadow-md p-5 mb-5">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold">下拉刷新增长规则</h2>
+                    <button id="add-rule-btn" class="text-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <div id="rules-container">
+                    <!-- 规则将通过JS动态添加 -->
+                </div>
+            </div>
+            
+            <!-- 保存按钮 -->
+            <button id="save-settings-btn" class="btn btn-primary btn-block py-3 mb-5">保存设置</button>
+            
+            <!-- 重置数据 -->
+            <div class="bg-white rounded-lg shadow-md p-5">
+                <h2 class="text-lg font-bold mb-4">数据管理</h2>
+                <p class="text-sm text-gray-600 mb-4">以下操作将重置数据，请谨慎操作</p>
+                <div class="flex space-x-4">
+                    <button id="reset-all-btn" class="btn bg-red-500 text-white flex-1">重置所有数据</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 规则模板 -->
+    <template id="rule-template">
+        <div class="rule-item border border-gray-200 rounded-lg p-3 mb-3">
+            <div class="flex justify-between items-center mb-2">
+                <span class="font-medium">规则</span>
+                <button class="delete-rule text-red-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="form-label text-sm">增长人数</label>
+                    <input type="number" class="form-control rule-increment" min="0" value="0">
+                </div>
+                <div>
+                    <label class="form-label text-sm">概率 (%)</label>
+                    <input type="number" class="form-control rule-probability" min="0" max="100" value="0" step="0.1">
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="../js/db.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+</html> 
