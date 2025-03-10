@@ -18,16 +18,29 @@ function initPullToRefresh() {
     const mainContent = document.getElementById('main-content');
     if (!mainContent) return;
     
+    // 防止多次初始化
+    if (mainContent.getAttribute('data-pull-refresh-initialized') === 'true') {
+        return;
+    }
+    
+    // 标记为已初始化
+    mainContent.setAttribute('data-pull-refresh-initialized', 'true');
+    
+    // 使用闭包保存状态，避免全局变量
     let startY = 0;
     let currentY = 0;
     let pulling = false;
     let refreshing = false;
     let hasMoved = false; // 添加标志，判断是否有移动
+    let refreshTimeout = null; // 存储刷新完成的timeout
+    let lastRefreshTime = 0; // 记录上次刷新时间，用于防抖
     
     // 触摸开始
     mainContent.addEventListener('touchstart', function(e) {
         // 只有在顶部才可以下拉刷新
         if (mainContent.scrollTop > 0) return;
+        // 如果正在刷新，不处理触摸事件
+        if (refreshing) return;
         
         startY = e.touches[0].clientY;
         currentY = startY; // 初始化currentY为startY
@@ -65,21 +78,48 @@ function initPullToRefresh() {
         
         const refreshContainer = mainContent.querySelector('.refresh-container');
         
-        // 确保有足够的下拉距离且确实有下拉动作
-        if (currentY - startY > 50 && hasMoved && !refreshing) {
+        // 防抖：限制两次刷新之间的最小间隔为2秒
+        const now = Date.now();
+        const timeSinceLastRefresh = now - lastRefreshTime;
+        
+        // 确保有足够的下拉距离且确实有下拉动作，并且与上次刷新间隔大于2秒
+        if (currentY - startY > 50 && hasMoved && !refreshing && timeSinceLastRefresh > 2000) {
             refreshing = true;
+            lastRefreshTime = now; // 更新上次刷新时间
+            
+            // 清除之前的timeout
+            if (refreshTimeout) {
+                clearTimeout(refreshTimeout);
+                refreshTimeout = null;
+            }
             
             // 执行刷新操作
-            performRefresh().then(() => {
-                // 刷新完成后恢复状态
-                setTimeout(() => {
-                    if (refreshContainer) {
-                        refreshContainer.style.marginTop = '';
-                    }
-                    mainContent.classList.remove('refresh-active');
-                    refreshing = false;
-                }, 1000);
-            });
+            performRefresh()
+                .then(() => {
+                    // 刷新完成后恢复状态
+                    refreshTimeout = setTimeout(() => {
+                        if (refreshContainer) {
+                            refreshContainer.style.marginTop = '';
+                        }
+                        mainContent.classList.remove('refresh-active');
+                        refreshing = false;
+                        refreshTimeout = null;
+                    }, 1000);
+                })
+                .catch(error => {
+                    // 确保即使发生错误也重置状态
+                    console.error('刷新过程中发生错误:', error);
+                    
+                    refreshTimeout = setTimeout(() => {
+                        if (refreshContainer) {
+                            refreshContainer.style.marginTop = '';
+                        }
+                        mainContent.classList.remove('refresh-active');
+                        refreshing = false;
+                        refreshTimeout = null;
+                        showToast('刷新失败，请重试');
+                    }, 1000);
+                });
         } else {
             // 如果下拉不足或没有下拉动作，恢复状态
             if (refreshContainer) {
@@ -98,10 +138,22 @@ function initPullToRefresh() {
  * @returns {Promise<void>}
  */
 async function performRefresh() {
+    // 使用一个静态变量来防止函数被多次并发调用
+    if (performRefresh.isRunning) {
+        console.log('刷新操作正在进行中，忽略此次调用');
+        return;
+    }
+    
+    performRefresh.isRunning = true;
+    
     try {
+        console.log('开始执行刷新操作...');
+        
         // 执行数据库刷新操作，增加新用户
         const result = await inviteDB.refreshAddUsers();
         const { increment, newInvites } = result;
+        
+        console.log(`刷新完成，新增 ${increment} 位用户`);
         
         // 更新页面数据（统计数据等）
         await updatePageData(true); // 跳过邀请列表更新
@@ -132,8 +184,15 @@ async function performRefresh() {
     } catch (error) {
         console.error('刷新失败:', error);
         showToast('刷新失败，请重试');
+        throw error; // 重新抛出错误，让调用者处理
+    } finally {
+        // 无论成功还是失败，都重置状态
+        performRefresh.isRunning = false;
     }
 }
+
+// 初始化静态变量
+performRefresh.isRunning = false;
 
 /**
  * 更新页面数据
