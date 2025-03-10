@@ -22,6 +22,7 @@ function initPullToRefresh() {
     let currentY = 0;
     let pulling = false;
     let refreshing = false;
+    let hasMoved = false; // 添加标志，判断是否有移动
     
     // 触摸开始
     mainContent.addEventListener('touchstart', function(e) {
@@ -29,7 +30,9 @@ function initPullToRefresh() {
         if (mainContent.scrollTop > 0) return;
         
         startY = e.touches[0].clientY;
+        currentY = startY; // 初始化currentY为startY
         pulling = true;
+        hasMoved = false; // 重置移动标志
     });
     
     // 触摸移动
@@ -39,8 +42,9 @@ function initPullToRefresh() {
         currentY = e.touches[0].clientY;
         const deltaY = currentY - startY;
         
-        // 下拉时显示刷新指示器
-        if (deltaY > 0) {
+        // 确保是明显的下拉动作（至少移动了10px）
+        if (deltaY > 10) {
+            hasMoved = true;
             e.preventDefault();
             mainContent.classList.add('refresh-active');
             
@@ -61,8 +65,8 @@ function initPullToRefresh() {
         
         const refreshContainer = mainContent.querySelector('.refresh-container');
         
-        // 如果下拉足够，执行刷新
-        if (currentY - startY > 50 && !refreshing) {
+        // 确保有足够的下拉距离且确实有下拉动作
+        if (currentY - startY > 50 && hasMoved && !refreshing) {
             refreshing = true;
             
             // 执行刷新操作
@@ -77,12 +81,15 @@ function initPullToRefresh() {
                 }, 1000);
             });
         } else {
-            // 如果下拉不足，恢复状态
+            // 如果下拉不足或没有下拉动作，恢复状态
             if (refreshContainer) {
                 refreshContainer.style.marginTop = '';
             }
             mainContent.classList.remove('refresh-active');
         }
+        
+        // 重置移动标志
+        hasMoved = false;
     });
 }
 
