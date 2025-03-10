@@ -229,7 +229,21 @@ async function updatePageData(skipInviteList = false) {
         totalEarnings.textContent = '¥' + (configs.todayCount * configs.invitePrice).toFixed(2);
     }
     
-    // 如果在邀请页面且未设置跳过，更新邀请列表
+    // 更新提现记录页面
+    if (window.location.pathname.includes('withdraw-records.html')) {
+        try {
+            console.log('更新提现记录页面数据...');
+            const withdrawals = await inviteDB.getWithdrawals(50);
+            if (typeof window.renderWithdrawals === 'function') {
+                window.renderWithdrawals(withdrawals);
+                console.log('提现记录页面数据更新完成');
+            }
+        } catch (error) {
+            console.error('更新提现记录页面失败:', error);
+        }
+    }
+
+    // 更新邀请页面数据
     if (window.location.pathname.includes('invite.html') && !skipInviteList) {
         // 使用window对象调用main.js中定义的updateInviteList函数
         if (typeof window.updateInviteList === 'function') {
