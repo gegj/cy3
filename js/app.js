@@ -167,7 +167,7 @@ async function updatePageData(skipInviteList = false) {
     }
     
     if (totalEarnings) {
-        totalEarnings.textContent = '¥' + (configs.totalCount * configs.invitePrice).toFixed(2);
+        totalEarnings.textContent = '¥' + (configs.todayCount * configs.invitePrice).toFixed(2);
     }
     
     // 如果在邀请页面且未设置跳过，更新邀请列表
