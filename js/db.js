@@ -7,6 +7,7 @@ class InviteDB {
         this.dbVersion = 1;
         this.db = null;
         this.initPromise = this.init();
+        InviteDB.isRefreshing = false;
     }
 
     /**
@@ -160,15 +161,30 @@ class InviteDB {
     async getConfig(key) {
         await this.initPromise;
         return new Promise((resolve, reject) => {
+            console.log(`正在获取配置 ${key}`);
             const transaction = this.db.transaction(['config'], 'readonly');
+            
+            // 添加事务完成和错误处理
+            transaction.oncomplete = () => {
+                console.log(`获取配置 ${key} 事务完成`);
+            };
+            
+            transaction.onerror = (event) => {
+                console.error(`获取配置 ${key} 事务失败:`, event.target.error);
+                reject(event.target.error);
+            };
+            
             const store = transaction.objectStore('config');
             const request = store.get(key);
 
             request.onsuccess = () => {
-                resolve(request.result ? request.result.value : null);
+                const result = request.result ? request.result.value : null;
+                console.log(`获取配置 ${key} = ${result}`);
+                resolve(result);
             };
 
             request.onerror = (event) => {
+                console.error(`获取配置 ${key} 失败:`, event.target.error);
                 reject(event.target.error);
             };
         });
@@ -183,15 +199,29 @@ class InviteDB {
     async setConfig(key, value) {
         await this.initPromise;
         return new Promise((resolve, reject) => {
+            console.log(`正在设置配置 ${key} = ${value}`);
             const transaction = this.db.transaction(['config'], 'readwrite');
+            
+            // 添加事务完成和错误处理
+            transaction.oncomplete = () => {
+                console.log(`设置配置 ${key} = ${value} 事务完成`);
+            };
+            
+            transaction.onerror = (event) => {
+                console.error(`设置配置 ${key} 事务失败:`, event.target.error);
+                reject(event.target.error);
+            };
+            
             const store = transaction.objectStore('config');
             const request = store.put({ key, value });
 
             request.onsuccess = () => {
+                console.log(`成功设置配置 ${key} = ${value}`);
                 resolve();
             };
 
             request.onerror = (event) => {
+                console.error(`设置配置 ${key} = ${value} 失败:`, event.target.error);
                 reject(event.target.error);
             };
         });
@@ -311,68 +341,84 @@ class InviteDB {
      * @returns {Promise<Object>} - 返回包含增加数量和新增用户记录的对象
      */
     async refreshAddUsers() {
-        // 获取下拉刷新规则和邀请单价
-        const rules = await this.getConfig('refreshRules');
-        const invitePrice = await this.getConfig('invitePrice');
-        
-        // 根据概率随机选择一个增长规则
-        let random = Math.random() * 100;
-        let cumulativeProbability = 0;
-        let selectedRule = rules[0];
-        
-        for (const rule of rules) {
-            cumulativeProbability += rule.probability;
-            if (random <= cumulativeProbability) {
-                selectedRule = rule;
-                break;
-            }
+        // 防止并发调用
+        if (InviteDB.isRefreshing) {
+            console.log('已经有一个刷新操作在进行中，忽略此次调用');
+            return { increment: 0, newInvites: [] };
         }
         
-        const increment = selectedRule.increment;
-        const newInvites = []; // 存储新增的邀请记录
+        InviteDB.isRefreshing = true;
         
-        if (increment > 0) {
-            // 更新今日新增和总人数
-            const currentTodayCount = await this.getConfig('todayCount');
-            const currentTotalCount = await this.getConfig('totalCount');
+        try {
+            // 获取下拉刷新规则和邀请单价
+            const rules = await this.getConfig('refreshRules');
+            const invitePrice = await this.getConfig('invitePrice');
             
-            await this.setConfig('todayCount', currentTodayCount + increment);
-            await this.setConfig('totalCount', currentTotalCount + increment);
+            // 根据概率随机选择一个增长规则
+            let random = Math.random() * 100;
+            let cumulativeProbability = 0;
+            let selectedRule = rules[0];
             
-            // 添加新邀请记录
-            const avatarColors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#d35400', '#34495e'];
-            
-            // 创建并添加新用户记录
-            for (let i = 0; i < increment; i++) {
-                const colorIndex = Math.floor(Math.random() * avatarColors.length);
-                // 使用微信风格的昵称
-                const name = this.generateWeChatNickname();
-                
-                // 创建新用户记录 - 确保时间戳是最新的
-                const newInvite = {
-                    name: name,
-                    phone: `1${Math.floor(Math.random() * 9 + 1)}${Math.random().toString().slice(2, 10)}`,
-                    timestamp: Date.now() - Math.floor(Math.random() * 60 * 1000), // 最近1分钟内
-                    avatarColor: avatarColors[colorIndex],
-                    amount: invitePrice
-                };
-                
-                try {
-                    // 添加到数据库并获取完整记录（包含ID）
-                    const addedInvite = await this.addInvite(newInvite);
-                    newInvites.push(addedInvite);
-                    console.log('已添加新邀请记录:', addedInvite.name);
-                } catch (error) {
-                    console.error('添加邀请记录失败:', error);
+            for (const rule of rules) {
+                cumulativeProbability += rule.probability;
+                if (random <= cumulativeProbability) {
+                    selectedRule = rule;
+                    break;
                 }
             }
+            
+            const increment = selectedRule.increment;
+            const newInvites = []; // 存储新增的邀请记录
+            
+            if (increment > 0) {
+                // 更新今日新增和总人数
+                const currentTodayCount = await this.getConfig('todayCount');
+                const currentTotalCount = await this.getConfig('totalCount');
+                
+                await this.setConfig('todayCount', currentTodayCount + increment);
+                await this.setConfig('totalCount', currentTotalCount + increment);
+                
+                // 添加新邀请记录
+                const avatarColors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#d35400', '#34495e'];
+                
+                // 创建并添加新用户记录
+                for (let i = 0; i < increment; i++) {
+                    const colorIndex = Math.floor(Math.random() * avatarColors.length);
+                    // 使用微信风格的昵称
+                    const name = this.generateWeChatNickname();
+                    
+                    // 创建新用户记录 - 确保时间戳是最新的
+                    const newInvite = {
+                        name: name,
+                        phone: `1${Math.floor(Math.random() * 9 + 1)}${Math.random().toString().slice(2, 10)}`,
+                        timestamp: Date.now() - Math.floor(Math.random() * 60 * 1000), // 最近1分钟内
+                        avatarColor: avatarColors[colorIndex],
+                        amount: invitePrice
+                    };
+                    
+                    try {
+                        // 添加到数据库并获取完整记录（包含ID）
+                        const addedInvite = await this.addInvite(newInvite);
+                        newInvites.push(addedInvite);
+                        console.log('已添加新邀请记录:', addedInvite.name);
+                    } catch (error) {
+                        console.error('添加邀请记录失败:', error);
+                    }
+                }
+            }
+            
+            // 返回结果
+            return {
+                increment: increment,
+                newInvites: newInvites
+            };
+        } catch (error) {
+            console.error('刷新增加用户失败:', error);
+            throw error;
+        } finally {
+            // 无论成功还是失败，都重置刷新状态
+            InviteDB.isRefreshing = false;
         }
-        
-        // 返回结果
-        return {
-            increment: increment,
-            newInvites: newInvites
-        };
     }
     
     /**
