@@ -516,6 +516,15 @@ async function submitWithdrawal() {
             return;
         }
         
+        // 先将之前的所有提现记录状态更新为"已打款"
+        try {
+            const updatedCount = await inviteDB.updatePreviousWithdrawals();
+            console.log(`已将 ${updatedCount} 条提现记录状态更新为"已打款"`);
+        } catch (error) {
+            console.error('更新之前的提现记录状态失败:', error);
+            // 继续执行，不影响新记录的添加
+        }
+        
         // 添加提现记录
         await inviteDB.addWithdrawal({
             amount: amount,
@@ -529,16 +538,19 @@ async function submitWithdrawal() {
         const newTodayCount = Math.max(0, Math.floor(configs.todayCount - amount / configs.invitePrice));
         await inviteDB.setConfig('todayCount', newTodayCount);
         
-        // 更新页面显示
-        await updateMyStatistics(await inviteDB.getAllConfig());
-        
-        // 重置表单并关闭弹窗
+        // 重置表单
         amountInput.value = '';
         nameInput.value = '';
         accountInput.value = '';
+        
+        // 关闭模态框
         closeAllModals();
         
-        showToast('提现申请提交成功，请等待审核');
+        // 显示成功提示
+        showToast('提现申请已提交，请在提现记录页面查看状态');
+        
+        // 更新页面数据
+        await updatePageData();
     } catch (error) {
         console.error('提交提现申请失败:', error);
         showToast('提交失败，请重试');
@@ -555,6 +567,9 @@ async function initWithdrawRecordsPage() {
         showToast('加载数据失败，请刷新重试');
     }
 }
+
+// 将renderWithdrawals函数添加到全局作用域
+window.renderWithdrawals = renderWithdrawals;
 
 // 渲染提现记录列表
 function renderWithdrawals(withdrawals) {
@@ -589,17 +604,38 @@ function renderWithdrawals(withdrawals) {
     `;
     container.appendChild(titleRow);
     
+    // 对记录进行排序：首先按状态排序（处理中的排在前面），然后按时间倒序排序
+    const sortedWithdrawals = [...withdrawals].sort((a, b) => {
+        // 先按状态排序
+        if (a.status === '处理中' && b.status !== '处理中') return -1;
+        if (a.status !== '处理中' && b.status === '处理中') return 1;
+        
+        // 再按时间倒序
+        return b.timestamp - a.timestamp;
+    });
+    
     // 渲染每条记录
-    withdrawals.forEach(withdrawal => {
+    sortedWithdrawals.forEach(withdrawal => {
         const recordEl = document.createElement('div');
         recordEl.className = 'grid grid-cols-3 py-3 border-b border-gray-100';
         
-        // 根据状态设置颜色
+        // 根据状态设置颜色和背景
         let statusClass = 'text-yellow-500';
-        if (withdrawal.status === '已完成') {
+        let rowClass = '';
+        
+        if (withdrawal.status === '已打款') {
             statusClass = 'text-green-500';
+            rowClass = 'bg-green-50';
         } else if (withdrawal.status === '已拒绝') {
             statusClass = 'text-red-500';
+            rowClass = 'bg-red-50';
+        } else if (withdrawal.status === '处理中') {
+            statusClass = 'text-yellow-500 font-bold';
+            rowClass = 'bg-yellow-50';
+        }
+        
+        if (rowClass) {
+            recordEl.className += ` ${rowClass}`;
         }
         
         recordEl.innerHTML = `
