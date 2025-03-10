@@ -283,10 +283,16 @@ async function initTaskPage() {
 
 function updateTaskStatistics(configs) {
     const todayEarnings = document.getElementById('today-earnings');
+    const totalEarnings = document.getElementById('task-total-earnings');
     
     if (todayEarnings) {
         const earnings = (configs.todayCount * configs.invitePrice).toFixed(2);
         todayEarnings.textContent = `¥${earnings}`;
+    }
+    
+    if (totalEarnings) {
+        const earnings = (configs.totalCount * configs.invitePrice).toFixed(2);
+        totalEarnings.textContent = `¥${earnings}`;
     }
 }
 
@@ -704,6 +710,7 @@ function updateMyStatistics(configs) {
     const totalCount = document.getElementById('total-count');
     const todayEarnings = document.getElementById('today-earnings');
     const totalEarnings = document.getElementById('total-earnings');
+    const withdrawableAmount = document.getElementById('withdrawable-amount');
     
     if (totalCount) {
         totalCount.textContent = `${configs.totalCount}人`;
@@ -715,8 +722,14 @@ function updateMyStatistics(configs) {
     }
     
     if (totalEarnings) {
-        const earnings = (configs.todayCount * configs.invitePrice).toFixed(2);
+        const earnings = (configs.totalCount * configs.invitePrice).toFixed(2);
         totalEarnings.textContent = earnings;
+    }
+    
+    // 更新可提现余额（使用今日新增人数计算）
+    if (withdrawableAmount) {
+        const amount = (configs.todayCount * configs.invitePrice).toFixed(2);
+        withdrawableAmount.textContent = `¥${amount}`;
     }
 }
 
