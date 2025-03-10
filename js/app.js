@@ -226,7 +226,7 @@ async function updatePageData(skipInviteList = false) {
     }
     
     if (totalEarnings) {
-        totalEarnings.textContent = '¥' + (configs.todayCount * configs.invitePrice).toFixed(2);
+        totalEarnings.textContent = '¥' + (configs.totalCount * configs.invitePrice).toFixed(2);
     }
     
     // 更新提现记录页面
