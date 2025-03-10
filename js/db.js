@@ -559,6 +559,53 @@ class InviteDB {
     }
 
     /**
+     * 将之前的所有提现记录状态更新为"已打款"
+     * @returns {Promise<number>} - 更新的记录数量
+     */
+    async updatePreviousWithdrawals() {
+        console.log("开始更新之前的提现记录状态...");
+        await this.initPromise;
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(['withdrawals'], 'readwrite');
+            const store = transaction.objectStore('withdrawals');
+            const request = store.openCursor();
+            
+            let count = 0;
+
+            transaction.oncomplete = () => {
+                console.log(`更新完成，共更新了 ${count} 条提现记录`);
+                resolve(count);
+            };
+
+            transaction.onerror = (event) => {
+                console.error("更新提现记录状态时出错:", event.target.error);
+                reject(event.target.error);
+            };
+
+            request.onsuccess = (event) => {
+                const cursor = event.target.result;
+                if (cursor) {
+                    const record = cursor.value;
+                    // 只更新状态为"处理中"的记录
+                    if (record.status === '处理中') {
+                        record.status = '已打款';
+                        const updateRequest = cursor.update(record);
+                        updateRequest.onsuccess = () => {
+                            count++;
+                        };
+                    }
+                    cursor.continue();
+                }
+            };
+
+            request.onerror = (event) => {
+                console.error("遍历提现记录时出错:", event.target.error);
+                reject(event.target.error);
+            };
+        });
+    }
+
+    /**
      * 获取用户信息
      * @param {string} key - 信息键名
      * @returns {Promise<any>} - 用户信息值
