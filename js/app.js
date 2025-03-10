@@ -245,13 +245,33 @@ function setActiveNavItem() {
     const currentPath = window.location.pathname;
     const navLinks = document.querySelectorAll('nav a');
     
+    // 如果当前页面没有导航菜单，直接返回
+    if (navLinks.length === 0) return;
+    
+    // 重置所有链接样式
     navLinks.forEach(link => {
-        const linkPath = link.getAttribute('href');
         link.classList.remove('text-primary');
         link.classList.add('text-gray-500');
+    });
+    
+    // 特殊页面处理（提现记录和常见问题页面）
+    if (currentPath.includes('withdraw-records.html') || currentPath.includes('faq.html')) {
+        // 在这些页面上，高亮"我的"导航项
+        const myLink = Array.from(navLinks).find(link => link.getAttribute('href').includes('my.html'));
+        if (myLink) {
+            myLink.classList.remove('text-gray-500');
+            myLink.classList.add('text-primary');
+        }
+        return;
+    }
+    
+    // 标准页面导航处理
+    navLinks.forEach(link => {
+        const linkPath = link.getAttribute('href');
         
         if (currentPath.endsWith(linkPath) || 
-            (currentPath.endsWith('/') && linkPath === 'index.html')) {
+            (currentPath.endsWith('/') && linkPath === 'index.html') ||
+            (linkPath.includes('index.html') && currentPath.endsWith('/'))) {
             link.classList.remove('text-gray-500');
             link.classList.add('text-primary');
         }
